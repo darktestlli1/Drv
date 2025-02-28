@@ -7,7 +7,7 @@ adb root
 adb logcat -c
 
 :loop
-adb logcat -d | findstr "HUNTER" | findstr "13G17GJG7173HYHYG" > nul 2>&1
+adb logcat -d | findstr "OFES" | findstr "13G17GJG7173HYHYG" > nul 2>&1
 if %errorlevel% equ 0 goto cleanup
 
 timeout /t 2 > nul
