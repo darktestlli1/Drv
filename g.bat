@@ -1,27 +1,21 @@
 @echo off
-setlocal enabledelayedexpansion
-
-set "TARGET_DIR=/data/data/com.rekoo.pubgm/lib"
-set "OUTPUT_DIR=%CD%"
-set "OLD_LIST="
+cls
+adb kill-server
+adb start-server
+adb.exe devices
+adb root
+adb logcat -c
 
 :loop
-::
-for /f "tokens=*" %%a in ('adb shell ls %TARGET_DIR% 2^>nul') do (
-    set "NEW_LIST=!NEW_LIST! %%a"
-)
+adb logcat -d | findstr "13G17GJG7173HYHYG" > nul 2>&1
+if %errorlevel% equ 0 goto cleanup
 
-:: 
-for %%b in (!NEW_LIST!) do (
-    echo !OLD_LIST! | find "%%b" >nul
-    if errorlevel 1 (
-        echo [+] New file pulled: %%b
-        adb pull %TARGET_DIR%/%%b %OUTPUT_DIR%
-    )
-)
-
-:: 
-set "OLD_LIST=!NEW_LIST!"
-set "NEW_LIST="
-timeout /t 1 /nobreak >nul
+timeout /t 2 > nul
 goto loop
+
+:cleanup
+echo Detected target log, performing cleanup...
+adb shell rm -rf /data/data/%pkg%/lib/libGVoicePlugin.so
+adb shell rm -rf /data/data/%pkg%/lib/libCasa.so
+echo Cleanup done.
+exit
